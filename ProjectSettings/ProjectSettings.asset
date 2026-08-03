@@ -826,7 +826,23 @@ PlayerSettings:
   webGLCloseOnQuit: 0
   webWasm2023: 0
   webEnableSubmoduleStrippingCompatibility: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    Android: SORTIFY
+    EmbeddedLinux: SORTIFY
+    GameCoreScarlett: SORTIFY
+    GameCoreXboxOne: SORTIFY
+    Kepler: SORTIFY
+    LinuxHeadlessSimulation: SORTIFY
+    Nintendo Switch: SORTIFY
+    Nintendo Switch 2: SORTIFY
+    PS4: SORTIFY
+    PS5: SORTIFY
+    QNX: SORTIFY
+    Standalone: SORTIFY
+    VisionOS: SORTIFY
+    WebGL: SORTIFY
+    XboxOne: SORTIFY
+    tvOS: SORTIFY
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
@@ -923,7 +939,7 @@ PlayerSettings:
   qnxGraphicConfPath: 
   apiCompatibilityLevel: 6
   captureStartupLogs: {}
-  activeInputHandler: 1
+  activeInputHandler: 2
   windowsGamepadBackendHint: 0
   cloudProjectId: dddca17f-b1a1-4442-87ab-99de30670159
   framebufferDepthMemorylessMode: 0
