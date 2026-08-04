@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: d77aa39161ef7bd449643862d77704ac
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 256483
+  packageName: Tetra Attributes
+  packageVersion: 1.0.6
+  assetPath: Assets/Tetra Creations/Tetra Attributes/Core/PathReference.cs
+  uploadId: 813290

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 1887d1a2422545949acd07791c827a13
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 256483
+  packageName: Tetra Attributes
+  packageVersion: 1.0.6
+  assetPath: Assets/Tetra Creations/Tetra Attributes/Core/TagsAttribute.cs
+  uploadId: 813290

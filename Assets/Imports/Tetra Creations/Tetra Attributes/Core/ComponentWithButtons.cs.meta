@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 96365165230d28b4a8cd82930a89f30e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 256483
+  packageName: Tetra Attributes
+  packageVersion: 1.0.6
+  assetPath: Assets/Tetra Creations/Tetra Attributes/Core/ComponentWithButtons.cs
+  uploadId: 813290

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 12fd628bf25d5154389084406d6341a1
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 256483
+  packageName: Tetra Attributes
+  packageVersion: 1.0.6
+  assetPath: Assets/Tetra Creations/Tetra Attributes/Editor/TetraCreations.Attributes.Editor.asmdef
+  uploadId: 813290

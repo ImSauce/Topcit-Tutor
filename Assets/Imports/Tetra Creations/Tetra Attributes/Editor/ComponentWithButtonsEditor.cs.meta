@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 807c87dcd9824ba4ea75709f8fef780f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 256483
+  packageName: Tetra Attributes
+  packageVersion: 1.0.6
+  assetPath: Assets/Tetra Creations/Tetra Attributes/Editor/ComponentWithButtonsEditor.cs
+  uploadId: 813290

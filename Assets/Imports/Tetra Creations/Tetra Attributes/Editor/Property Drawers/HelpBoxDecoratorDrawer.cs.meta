@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 206baa8e56d288847b1b642b461f6add
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 256483
+  packageName: Tetra Attributes
+  packageVersion: 1.0.6
+  assetPath: Assets/Tetra Creations/Tetra Attributes/Editor/Property Drawers/HelpBoxDecoratorDrawer.cs
+  uploadId: 813290
