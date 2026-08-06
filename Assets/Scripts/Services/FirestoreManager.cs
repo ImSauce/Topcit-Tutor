@@ -5,7 +5,7 @@ using Firebase.Firestore;
 using Firebase.Extensions;
 using UnityEngine;
 
-/// <summary>
+///----------------------------------------------------------------------------------------------
 /// Single entry point for all Firestore reads/writes.
 /// Attach to the same persistent "Managers" GameObject as FirebaseManager.
 ///
@@ -17,7 +17,7 @@ using UnityEngine;
 ///        └─ Modules/{moduleId}
 ///             ├─ Lessons/{lessonId}
 ///             └─ Quizzes/{quizId}
-/// </summary>
+///----------------------------------------------------------------------------------------------
 public class FirestoreManager : MonoBehaviour
 {
     public static FirestoreManager Instance { get; private set; }
@@ -42,7 +42,7 @@ public class FirestoreManager : MonoBehaviour
     // GENERIC HELPERS — use these for anything not covered below
     // =========================================================
 
-    /// <summary>Creates or fully overwrites a document at the given path.</summary>
+    /// Creates or fully overwrites a document at the given path.
     public async Task<bool> SetDocument(string path, Dictionary<string, object> data, bool merge = true)
     {
         try
@@ -59,7 +59,7 @@ public class FirestoreManager : MonoBehaviour
         }
     }
 
-    /// <summary>Updates specific fields on an existing document without touching the rest.</summary>
+    /// Updates specific fields on an existing document without touching the rest.
     public async Task<bool> UpdateFields(string path, Dictionary<string, object> fields)
     {
         try
@@ -75,7 +75,7 @@ public class FirestoreManager : MonoBehaviour
         }
     }
 
-    /// <summary>Fetches a single document. Returns null if it doesn't exist or on error.</summary>
+    /// Fetches a single document. Returns null if it doesn't exist or on error.
     public async Task<DocumentSnapshot> GetDocument(string path)
     {
         try
@@ -91,7 +91,7 @@ public class FirestoreManager : MonoBehaviour
         }
     }
 
-    /// <summary>Fetches every document in a collection (e.g. all achievements for a user).</summary>
+    /// Fetches every document in a collection (e.g. all achievements for a user).
     public async Task<List<DocumentSnapshot>> GetCollection(string path)
     {
         try
@@ -121,7 +121,7 @@ public class FirestoreManager : MonoBehaviour
         }
     }
 
-    /// <summary>Atomically increments a numeric field (points, xp, streak, hints, etc.) without a separate read.</summary>
+    /// Atomically increments a numeric field (points, xp, streak, hints, etc.) without a separate read.
     public async Task<bool> IncrementField(string path, string field, long amount)
     {
         return await UpdateFields(path, new Dictionary<string, object>
@@ -134,7 +134,7 @@ public class FirestoreManager : MonoBehaviour
     // USERS
     // =========================================================
 
-    /// <summary>Creates the initial user document. Call this right after registration.</summary>
+    /// Creates the initial user document. Call this right after registration.
     public async Task<bool> CreateUser(string userId, string username)
     {
         var data = new Dictionary<string, object>
@@ -216,7 +216,7 @@ public class FirestoreManager : MonoBehaviour
         return await SetDocument($"Users/{userId}/Inventory/{itemId}", data);
     }
 
-    /// <summary>Equips one item and unequips everything else in the inventory.</summary>
+    /// Equips one item and unequips everything else in the inventory.
     public async Task<bool> EquipItem(string userId, string itemId)
     {
         List<DocumentSnapshot> items = await GetInventory(userId);
