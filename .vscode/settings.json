@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Topcit-Tutor.slnx"
+    "dotnet.defaultSolution": "Topcit Tutor.slnx"
 }

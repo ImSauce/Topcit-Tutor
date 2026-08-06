@@ -1,8 +1,7 @@
-using UnityEngine;
 using UnityEngine.Analytics;
 using System.Collections.Generic;
 
-public class AnalyticsManager : MonoBehaviour
+public class AnalyticsManager
 {
     // =========================
     // GAME
@@ -19,33 +18,86 @@ public class AnalyticsManager : MonoBehaviour
     }
 
     // =========================
-    // LEVELS
+    // LOGIN
     // =========================
 
-    public static void LevelStarted(int level)
+    public static void Login()
     {
-        Analytics.CustomEvent("level_started",
+        Analytics.CustomEvent("login");
+    }
+
+    public static void Register()
+    {
+        Analytics.CustomEvent("register");
+    }
+
+    public static void Logout()
+    {
+        Analytics.CustomEvent("logout");
+    }
+
+    // =========================
+    // MENU
+    // =========================
+
+    public static void MainMenuOpened()
+    {
+        Analytics.CustomEvent("main_menu");
+    }
+
+    public static void SettingsOpened()
+    {
+        Analytics.CustomEvent("settings_opened");
+    }
+
+    public static void CreditsOpened()
+    {
+        Analytics.CustomEvent("credits_opened");
+    }
+
+    // =========================
+    // SUBJECTS
+    // =========================
+
+    public static void SubjectUnlocked(string subjectId, string title)
+    {
+        Analytics.CustomEvent("subject_unlocked",
             new Dictionary<string, object>
             {
-                { "level", level }
+                { "subjectId", subjectId },
+                { "title", title }
             });
     }
 
-    public static void LevelCompleted(int level)
+    public static void SubjectCompleted(string subjectId)
     {
-        Analytics.CustomEvent("level_completed",
+        Analytics.CustomEvent("subject_completed",
             new Dictionary<string, object>
             {
-                { "level", level }
+                { "subjectId", subjectId }
             });
     }
 
-    public static void LevelFailed(int level)
+    // =========================
+    // MODULES
+    // =========================
+
+    public static void ModuleUnlocked(string moduleId, string title)
     {
-        Analytics.CustomEvent("level_failed",
+        Analytics.CustomEvent("module_unlocked",
             new Dictionary<string, object>
             {
-                { "level", level }
+                { "moduleId", moduleId },
+                { "title", title }
+            });
+    }
+
+    public static void ModuleCompleted(string moduleId)
+    {
+        Analytics.CustomEvent("module_completed",
+            new Dictionary<string, object>
+            {
+                { "moduleId", moduleId }
             });
     }
 
@@ -53,53 +105,54 @@ public class AnalyticsManager : MonoBehaviour
     // LESSONS
     // =========================
 
-    public static void LessonStarted(string lessonName)
+    public static void LessonStarted(string lessonId)
     {
         Analytics.CustomEvent("lesson_started",
             new Dictionary<string, object>
             {
-                { "lesson", lessonName }
+                { "lessonId", lessonId }
             });
     }
 
-    public static void LessonCompleted(string lessonName)
+    public static void LessonCompleted(string lessonId)
     {
         Analytics.CustomEvent("lesson_completed",
             new Dictionary<string, object>
             {
-                { "lesson", lessonName }
+                { "lessonId", lessonId }
             });
     }
 
     // =========================
-    // QUIZ
+    // QUIZZES
     // =========================
 
-    public static void QuizStarted(string quiz)
+    public static void QuizStarted(string quizId)
     {
         Analytics.CustomEvent("quiz_started",
             new Dictionary<string, object>
             {
-                { "quiz", quiz }
+                { "quizId", quizId }
             });
     }
 
-    public static void QuizCompleted(string quiz, int score)
+    public static void QuizCompleted(string quizId, int score, float elapsedTimeSeconds)
     {
         Analytics.CustomEvent("quiz_completed",
             new Dictionary<string, object>
             {
-                { "quiz", quiz },
-                { "score", score }
+                { "quizId", quizId },
+                { "score", score },
+                { "elapsedTime", elapsedTimeSeconds }
             });
     }
 
-    public static void QuizFailed(string quiz)
+    public static void QuizFailed(string quizId)
     {
         Analytics.CustomEvent("quiz_failed",
             new Dictionary<string, object>
             {
-                { "quiz", quiz }
+                { "quizId", quizId }
             });
     }
 
@@ -118,32 +171,89 @@ public class AnalyticsManager : MonoBehaviour
     }
 
     // =========================
-    // PLAYER
+    // ACHIEVEMENTS
     // =========================
 
-    public static void PlayerDied()
+    public static void AchievementUnlocked(string achievementId, string title)
     {
-        Analytics.CustomEvent("player_died");
+        Analytics.CustomEvent("achievement_unlocked",
+            new Dictionary<string, object>
+            {
+                { "achievementId", achievementId },
+                { "title", title }
+            });
     }
 
-    public static void PlayerRespawned()
+    // =========================
+    // INVENTORY
+    // =========================
+
+    public static void ItemUnlocked(string itemId, string itemName)
     {
-        Analytics.CustomEvent("player_respawned");
+        Analytics.CustomEvent("item_unlocked",
+            new Dictionary<string, object>
+            {
+                { "itemId", itemId },
+                { "itemName", itemName }
+            });
     }
 
-    public static void PlayerJumped()
+    public static void ItemEquipped(string itemId)
     {
-        Analytics.CustomEvent("player_jumped");
+        Analytics.CustomEvent("item_equipped",
+            new Dictionary<string, object>
+            {
+                { "itemId", itemId }
+            });
     }
 
-    public static void GunFired()
+    // =========================
+    // PROGRESSION (xp, points, level, streak, hints)
+    // =========================
+
+    public static void XpGained(int amount)
     {
-        Analytics.CustomEvent("gun_fired");
+        Analytics.CustomEvent("xp_gained",
+            new Dictionary<string, object>
+            {
+                { "amount", amount }
+            });
     }
 
-    public static void Reload()
+    public static void PointsGained(int amount)
     {
-        Analytics.CustomEvent("reload");
+        Analytics.CustomEvent("points_gained",
+            new Dictionary<string, object>
+            {
+                { "amount", amount }
+            });
+    }
+
+    public static void LevelUp(int newLevel)
+    {
+        Analytics.CustomEvent("level_up",
+            new Dictionary<string, object>
+            {
+                { "level", newLevel }
+            });
+    }
+
+    public static void StreakUpdated(int streak)
+    {
+        Analytics.CustomEvent("streak_updated",
+            new Dictionary<string, object>
+            {
+                { "streak", streak }
+            });
+    }
+
+    public static void HintUsed(int hintsRemaining)
+    {
+        Analytics.CustomEvent("hint_used",
+            new Dictionary<string, object>
+            {
+                { "hintsRemaining", hintsRemaining }
+            });
     }
 
     // =========================
@@ -178,211 +288,16 @@ public class AnalyticsManager : MonoBehaviour
     }
 
     // =========================
-    // MENU
-    // =========================
-
-    public static void MainMenuOpened()
-    {
-        Analytics.CustomEvent("main_menu");
-    }
-
-    public static void SettingsOpened()
-    {
-        Analytics.CustomEvent("settings_opened");
-    }
-
-    public static void CreditsOpened()
-    {
-        Analytics.CustomEvent("credits_opened");
-    }
-
-    // =========================
-    // LOGIN
-    // =========================
-
-    public static void Login()
-    {
-        Analytics.CustomEvent("login");
-    }
-
-    public static void Register()
-    {
-        Analytics.CustomEvent("register");
-    }
-
-    public static void Logout()
-    {
-        Analytics.CustomEvent("logout");
-    }
-
-    // =========================
-    // ACHIEVEMENTS
-    // =========================
-
-    public static void AchievementUnlocked(string achievement)
-    {
-        Analytics.CustomEvent("achievement_unlocked",
-            new Dictionary<string, object>
-            {
-                { "achievement", achievement }
-            });
-    }
-
-    // =========================
     // TIME
     // =========================
 
-    public static void TimeSpent(string lesson, float seconds)
+    public static void TimeSpent(string lessonId, float seconds)
     {
         Analytics.CustomEvent("time_spent",
             new Dictionary<string, object>
             {
-                { "lesson", lesson },
+                { "lessonId", lessonId },
                 { "seconds", seconds }
             });
     }
-
-
-    
 }
-
-
-//Use Examples
-// // =========================
-// // GAME
-// // =========================
-
-// // Game starts
-// AnalyticsManager.GameStarted();
-
-// // Game closes
-// AnalyticsManager.GameClosed();
-
-
-// // =========================
-// // LEVELS
-// // =========================
-
-// // Player enters Level 1
-// AnalyticsManager.LevelStarted(1);
-
-// // Player completes Level 1
-// AnalyticsManager.LevelCompleted(1);
-
-// // Player fails Level 1
-// AnalyticsManager.LevelFailed(1);
-
-
-// // =========================
-// // LESSONS
-// // =========================
-
-// // Opens lesson
-// AnalyticsManager.LessonStarted("Variables");
-
-// // Completes lesson
-// AnalyticsManager.LessonCompleted("Variables");
-
-
-// // =========================
-// // QUIZZES
-// // =========================
-
-// // Quiz begins
-// AnalyticsManager.QuizStarted("Java Basics");
-
-// // Quiz completed
-// AnalyticsManager.QuizCompleted("Java Basics", 90);
-
-// // Quiz failed
-// AnalyticsManager.QuizFailed("Java Basics");
-
-
-// // =========================
-// // QUESTIONS
-// // =========================
-
-// // Correct answer
-// AnalyticsManager.CorrectAnswer();
-
-// // Wrong answer
-// AnalyticsManager.WrongAnswer();
-
-
-// // =========================
-// // PLAYER
-// // =========================
-
-// // Player dies
-// AnalyticsManager.PlayerDied();
-
-// // Player respawns
-// AnalyticsManager.PlayerRespawned();
-
-// // Player jumps
-// AnalyticsManager.PlayerJumped();
-
-// // Gun fired
-// AnalyticsManager.GunFired();
-
-// // Reload weapon
-// AnalyticsManager.Reload();
-
-
-// // =========================
-// // SETTINGS
-// // =========================
-
-// // Graphics quality changed
-// AnalyticsManager.ChangedGraphics("Ultra");
-
-// // Resolution changed
-// AnalyticsManager.ChangedResolution("1920x1080");
-
-// // Volume changed
-// AnalyticsManager.VolumeChanged(0.75f);
-
-
-// // =========================
-// // MENU
-// // =========================
-
-// // Main menu opened
-// AnalyticsManager.MainMenuOpened();
-
-// // Settings menu opened
-// AnalyticsManager.SettingsOpened();
-
-// // Credits viewed
-// AnalyticsManager.CreditsOpened();
-
-
-// // =========================
-// // ACCOUNT
-// // =========================
-
-// // User logged in
-// AnalyticsManager.Login();
-
-// // User registered
-// AnalyticsManager.Register();
-
-// // User logged out
-// AnalyticsManager.Logout();
-
-
-// // =========================
-// // ACHIEVEMENTS
-// // =========================
-
-// // Achievement unlocked
-// AnalyticsManager.AchievementUnlocked("First Quiz");
-
-
-// // =========================
-// // TIME
-// // =========================
-
-// // Player spent 132.5 seconds in lesson
-// AnalyticsManager.TimeSpent("Variables", 132.5f);
-
