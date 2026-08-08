@@ -3,6 +3,7 @@ using Firebase.Extensions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 ///----------------------------------------------------------------------------------------------
 /// Handles login and registration UI logic. Assumes FirebaseManager has
 /// already initialized Firebase (or is in the process of doing so).
@@ -16,6 +17,7 @@ public class AuthManager : MonoBehaviour
     public TMP_Text warningLoginText;
     public TMP_Text confirmLoginText;
     public Button loginButton;
+    public SceneLoader sceneLoader;
 
     [Header("Register")]
     public TMP_InputField usernameRegisterField;
@@ -65,6 +67,7 @@ public class AuthManager : MonoBehaviour
         FirebaseUser user = result.Result.User;
         Debug.Log($"User signed in: {user.DisplayName} ({user.Email})");
         confirmLoginText.text = "Logged In";
+        sceneLoader.LoadScene();
     }
 
     private async System.Threading.Tasks.Task Register(

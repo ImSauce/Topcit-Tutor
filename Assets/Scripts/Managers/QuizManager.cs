@@ -33,12 +33,26 @@ public class QuizManager : MonoBehaviour
     public Color wrongColor = Color.red;
     public float colorShowTime = 1f;
 
+    // These 3 tell Firebase WHERE to save this quiz's result.
+    // They must match the folder names you made in Firestore.
+    // Example: subject_1 / module_1 / quiz_1
+    [Header("Firebase Save Location")]
+    public string subjectId;
+    public string moduleId;
+    public string quizId;
+
     private int currentQuestionIndex = 0;
     private List<GameObject> spawnedAnswers = new List<GameObject>();
     private Color questionDefaultColor;
 
     // Stops the player's shot from counting twice while we are showing the color / waiting
     private bool acceptingShots = true;
+
+    // Keeps count of how many questions the player got right, for the score.
+    private int correctAnswersCount = 0;
+
+    // Remembers what time the quiz began, so we can measure how long it took.
+    private float quizStartTime;
 
     private void Awake()
     {
@@ -48,6 +62,7 @@ public class QuizManager : MonoBehaviour
     private void Start()
     {
         questionDefaultColor = questionText.color;
+        quizStartTime = Time.time; // start the stopwatch for this quiz
         ShowQuestion(currentQuestionIndex);
     }
 
@@ -101,6 +116,17 @@ public class QuizManager : MonoBehaviour
         questionText.color = resultColor;
         target.answerLabel.color = resultColor;
 
+        // Keep score, and log it for analytics
+        if (target.isCorrectAnswer)
+        {
+            correctAnswersCount++;
+            AnalyticsManager.CorrectAnswer();
+        }
+        else
+        {
+            AnalyticsManager.WrongAnswer();
+        }
+
         StartCoroutine(NextQuestionAfterDelay());
     }
 
@@ -133,14 +159,32 @@ public class QuizManager : MonoBehaviour
         spawnedAnswers.Clear();
     }
 
-    /// <summary>Called once there are no questions left.</summary>
-    private void QuizFinished()
+    /// <summary>Called once there are no questions left. Saves the result to Firebase.</summary>
+    private async void QuizFinished()
     {
         questionText.text = "Quiz Complete!";
         questionText.color = questionDefaultColor;
 
-        // This is where you would show a results screen,
-        // save the score to Firestore, give XP, etc.
+        // Figure out how many seconds the whole quiz took.
+        int elapsedSeconds = Mathf.RoundToInt(Time.time - quizStartTime);
+
+        // Get the ID of the player who is currently logged in.
+        string userId = FirebaseManager.Instance.Auth.CurrentUser.UserId;
+
+        // Save the score and time for this quiz into Firestore.
+        await FirestoreManager.Instance.CompleteQuiz(
+            userId, subjectId, moduleId, quizId, correctAnswersCount, elapsedSeconds);
+
+        // Tell the module "one more quiz was finished" so its counter goes up.
+        await FirestoreManager.Instance.IncrementCompletedQuizzes(userId, subjectId, moduleId);
+
+        // Reward the player with some xp and points based on how many they got right.
+        // Feel free to change these numbers to whatever feels fair for your game.
+        await FirestoreManager.Instance.AddXp(userId, correctAnswersCount * 10);
+        await FirestoreManager.Instance.AddPoints(userId, correctAnswersCount * 5);
+
+        // Log this finished quiz for analytics too.
+        AnalyticsManager.QuizCompleted(quizId, correctAnswersCount, elapsedSeconds);
     }
 
     /// <summary>Puts a list of numbers in random order (simple shuffle).</summary>

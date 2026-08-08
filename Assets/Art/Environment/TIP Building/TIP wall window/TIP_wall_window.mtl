@@ -1,0 +1,8 @@
+# Made in Blockbench 4.12.3
+newmtl m_1e2332be-35c6-26db-3db0-1d9706af6ea4
+map_Kd window wall TIP.png
+newmtl m_aa9c2a5d-bc3b-0dc2-9695-152f78488836
+map_Kd window frame tip.png
+newmtl m_ac7b0363-73d5-6ad4-6667-f1e2850365da
+map_Kd window glass TIP.png
+newmtl none
