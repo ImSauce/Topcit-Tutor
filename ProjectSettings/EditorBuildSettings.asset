@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Auth Tutorial.unity
     guid: d3c095d7e7b30644c925998a0b5842a5
   - enabled: 1
-    path: Assets/Scenes/Quiz UI Practice.unity
+    path: "Assets/Scenes/\U0001F7E9Quiz UI Practice.unity"
     guid: 02ddb259cbeef3b44b7b13421d554142
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

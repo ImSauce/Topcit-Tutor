@@ -35,6 +35,22 @@ public class MapPanner : MonoBehaviour, IBeginDragHandler, IDragHandler
         startPosition = content.anchoredPosition;
     }
 
+    private void Update()
+    {
+        // Press Return or Keypad Enter any time to snap back to the starting position,
+        // in case the player drags around and gets lost.
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            ResetPosition();
+        }
+    }
+
+    /// <summary>Instantly moves Content back to wherever it started.</summary>
+    public void ResetPosition()
+    {
+        content.anchoredPosition = startPosition;
+    }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
         // Nothing needed here right now, but Unity requires this method
@@ -46,15 +62,20 @@ public class MapPanner : MonoBehaviour, IBeginDragHandler, IDragHandler
         // Move the content by however far the mouse/finger moved this frame.
         content.anchoredPosition += eventData.delta;
 
-        ClampToViewport();
+        Reclamp();
     }
 
-    /// <summary>Stops the content from being dragged too far past its own edges.</summary>
-    private void ClampToViewport()
+    /// <summary>
+    /// Stops the content from being dragged too far past its own edges.
+    /// Public so other scripts (like a zoom manager) can call this after
+    /// changing Content's size or scale, to make sure it's still in bounds.
+    /// </summary>
+    public void Reclamp()
     {
         // How much bigger the content is than the viewport, on each side.
-        float extraWidth = content.rect.width - viewport.rect.width;
-        float extraHeight = content.rect.height - viewport.rect.height;
+        // Multiplied by localScale so zooming in/out (done by another script) is taken into account.
+        float extraWidth = (content.rect.width * content.localScale.x) - viewport.rect.width;
+        float extraHeight = (content.rect.height * content.localScale.y) - viewport.rect.height;
 
         // Allow moving edgeBuffer past "home" in either direction, plus however
         // much room the extra size actually gives us to reveal.
