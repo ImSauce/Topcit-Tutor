@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneSwift.SceneManagerSettings
   _favorites: []
   _recent:
+  - "Assets/Scenes/\U0001F7E9Lobby.unity"
   - "Assets/Scenes/\U0001F7E9Login.unity"
   - "Assets/Scenes/\U0001F7E9Modules.unity"
   - Assets/Scenes/Auth Tutorial.unity
@@ -23,7 +24,6 @@ MonoBehaviour:
   - Assets/Art/Imports/school/DemoScene/all_.unity
   - Assets/Scenes/Light Practice.unity
   - Assets/Art/Imports/school/DemoScene/all_objects.unity
-  - Assets/Scenes/first person test.unity
   _groups: []
   _sceneColors: []
   _startupScenePath: 

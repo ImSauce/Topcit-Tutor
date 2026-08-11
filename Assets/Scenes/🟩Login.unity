@@ -20431,7 +20431,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b44a90c6c4653444a4df3cb69bdcb63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
-  sceneToLoad: {fileID: 102900000, guid: 02ddb259cbeef3b44b7b13421d554142, type: 3}
+  scenes:
+  - sceneAsset: {fileID: 102900000, guid: 339062f8067a5de4e9af40ece1dcdfc0, type: 3}
+    sceneName: Lobby
+  defaultIndex: 0
 --- !u!1 &765690798
 GameObject:
   m_ObjectHideFlags: 0
