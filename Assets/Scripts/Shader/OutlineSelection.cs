@@ -1,0 +1,58 @@
+//MIT License
+//Copyright (c) 2023 DA LAB (https://www.youtube.com/@DA-LAB)
+//Permission is hereby granted, free of charge, to any person obtaining a copy
+//of this software and associated documentation files (the "Software"), to deal
+//in the Software without restriction, including without limitation the rights
+//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//copies of the Software, and to permit persons to whom the Software is
+//furnished to do so, subject to the following conditions:
+//The above copyright notice and this permission notice shall be included in all
+//copies or substantial portions of the Software.
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//SOFTWARE.
+
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class OutlineSelection : MonoBehaviour
+{
+    private Transform highlight;
+    private RaycastHit raycastHit;
+
+    void Update()
+    {
+        // Clear previous highlight
+        if (highlight != null)
+        {
+            highlight.gameObject.GetComponent<Outline>().enabled = false;
+            highlight = null;
+        }
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        // Make sure you have EventSystem in the hierarchy before using EventSystem
+        if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out raycastHit))
+        {
+            Transform hitTransform = raycastHit.transform;
+
+            if (hitTransform.CompareTag("Selectable"))
+            {
+                Outline outline = hitTransform.gameObject.GetComponent<Outline>();
+                if (outline == null)
+                {
+                    outline = hitTransform.gameObject.AddComponent<Outline>();
+                    outline.OutlineColor = Color.white;
+                    outline.OutlineWidth = 7.0f;
+                }
+
+                outline.enabled = true;
+                highlight = hitTransform;
+            }
+        }
+    }
+}
