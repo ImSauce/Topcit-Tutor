@@ -1,4 +1,5 @@
 ﻿<Solution>
+  <Project Path="RBG.Mulligan.csproj" />
   <Project Path="glTFast.Editor.csproj" />
   <Project Path="glTFast.csproj" />
   <Project Path="glTFast.Documentation.Examples.csproj" />

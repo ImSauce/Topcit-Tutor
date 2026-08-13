@@ -25,13 +25,21 @@ using UnityEngine;
 ///    default, and looking DOWN specifically is squeezed even further,
 ///    so the camera never dips low enough to feel like it's losing its
 ///    framing.
+/// 6. The whole effect can be enabled/disabled at runtime (e.g. from a
+///    UI Button's OnClick) via EnableEffect() / DisableEffect() /
+///    ToggleEffect() / SetEffectEnabled(bool). When disabled, the camera
+///    smoothly eases back to its home base rather than snapping.
 /// </summary>
 public class CameraParallaxEffect : MonoBehaviour
 {
     [Header("References")]
     [Tooltip("Leave empty to use the GameObject this script is attached to.")]
     [SerializeField] private Transform cameraTransform;
- 
+
+    [Header("Enable / Disable")]
+    [Tooltip("Whether the parallax effect is active. Can also be toggled at runtime via EnableEffect() / DisableEffect() / ToggleEffect(), e.g. from a UI Button.")]
+    [SerializeField] private bool effectEnabled = true;
+
     [Header("Movement Range")]
     [Tooltip("Max horizontal shift, in world units.")]
     [SerializeField] private float maxOffsetX = 0.5f;
@@ -119,26 +127,38 @@ public class CameraParallaxEffect : MonoBehaviour
  
     private void Update()
     {
-        // If there's an active touch, prioritize touch drag (this covers both
-        // real mobile devices and testing with touch in the editor).
-        if (Input.touchCount > 0)
+        if (effectEnabled)
         {
-            targetOffsetPercent = HandleTouchDrag();
-            pointerViewportPosition = new Vector2(
-                Input.GetTouch(0).position.x / Screen.width,
-                Input.GetTouch(0).position.y / Screen.height
-            );
+            // If there's an active touch, prioritize touch drag (this covers both
+            // real mobile devices and testing with touch in the editor).
+            if (Input.touchCount > 0)
+            {
+                targetOffsetPercent = HandleTouchDrag();
+                pointerViewportPosition = new Vector2(
+                    Input.GetTouch(0).position.x / Screen.width,
+                    Input.GetTouch(0).position.y / Screen.height
+                );
+            }
+            else
+            {
+                // No touch happening, fall back to mouse-edge behavior, and let
+                // any leftover touch drag value ease back down to zero.
+                targetOffsetPercent = HandleMouseEdge();
+                touchDragPercent = Vector2.Lerp(touchDragPercent, Vector2.zero, Time.deltaTime * dragRecoverySpeed);
+                pointerViewportPosition = new Vector2(
+                    Input.mousePosition.x / Screen.width,
+                    Input.mousePosition.y / Screen.height
+                );
+            }
         }
         else
         {
-            // No touch happening, fall back to mouse-edge behavior, and let
-            // any leftover touch drag value ease back down to zero.
-            targetOffsetPercent = HandleMouseEdge();
+            // Effect is off: stop reading input and aim everything back at the
+            // home base so the camera eases back smoothly instead of snapping.
+            targetOffsetPercent = Vector2.zero;
             touchDragPercent = Vector2.Lerp(touchDragPercent, Vector2.zero, Time.deltaTime * dragRecoverySpeed);
-            pointerViewportPosition = new Vector2(
-                Input.mousePosition.x / Screen.width,
-                Input.mousePosition.y / Screen.height
-            );
+            pointerViewportPosition = new Vector2(0.5f, 0.5f); // treat as screen-center -> no top-center pitch either
+            activeTouchId = -1;
         }
  
         // SmoothDamp gives a more natural "catching up" feel than a plain Lerp -
@@ -153,6 +173,40 @@ public class CameraParallaxEffect : MonoBehaviour
  
         ApplyOffset(currentOffsetPercent);
     }
+
+    // ---------------------------------------------------------------------
+    // Enable / Disable controls - hook these up to a UI Button's OnClick().
+    // ---------------------------------------------------------------------
+
+    /// <summary>Turns the parallax effect on.</summary>
+    public void EnableEffect()
+    {
+        SetEffectEnabled(true);
+    }
+
+    /// <summary>Turns the parallax effect off. The camera eases back to its home base.</summary>
+    public void DisableEffect()
+    {
+        SetEffectEnabled(false);
+    }
+
+    /// <summary>Flips the effect between enabled and disabled. Handy for a single toggle button.</summary>
+    public void ToggleEffect()
+    {
+        SetEffectEnabled(!effectEnabled);
+    }
+
+    /// <summary>
+    /// Explicitly sets whether the effect is enabled. This is the one to use if you're
+    /// wiring a Toggle UI element (Button OnClick supports a Dynamic bool argument too).
+    /// </summary>
+    public void SetEffectEnabled(bool value)
+    {
+        effectEnabled = value;
+    }
+
+    /// <summary>Whether the effect is currently enabled.</summary>
+    public bool IsEffectEnabled => effectEnabled;
  
     /// <summary>
     /// Desktop: checks how close the mouse is to the screen edges and
@@ -287,4 +341,3 @@ public class CameraParallaxEffect : MonoBehaviour
         cameraTransform.localRotation = baseRotation * Quaternion.Euler(pitch, yaw, 0f);
     }
 }
- 

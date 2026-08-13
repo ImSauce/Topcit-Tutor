@@ -199,6 +199,7 @@ public class UnityAndGeminiV3: MonoBehaviour
     {
         string userMessage = inputField.text;
         StartCoroutine( SendChatRequestToGemini(userMessage));
+        inputField.text = "";
     }
 
 
