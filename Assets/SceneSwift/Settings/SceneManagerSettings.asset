@@ -15,8 +15,8 @@ MonoBehaviour:
   _favorites: []
   _recent:
   - "Assets/Scenes/\U0001F7E9Lobby.unity"
-  - "Assets/Scenes/\U0001F7E9Modules.unity"
   - "Assets/Scenes/\U0001F7E9Login.unity"
+  - "Assets/Scenes/\U0001F7E9Modules.unity"
   - "Assets/Scenes/\U0001F7E9Quiz UI Practice.unity"
   - Assets/Scenes/Auth Tutorial.unity
   - Assets/Scenes/LOBBY.unity

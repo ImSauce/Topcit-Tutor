@@ -13,10 +13,10 @@ ScriptedImporter:
   importSettings:
     nodeNameMethod: 1
     animationMethod: 2
-    generateMipMaps: 1
-    texturesReadable: 0
-    defaultMinFilterMode: 9728
-    defaultMagFilterMode: 9728
+    generateMipMaps: 0
+    texturesReadable: 1
+    defaultMinFilterMode: 0
+    defaultMagFilterMode: 0
     anisotropicFilterLevel: 1
   instantiationSettings:
     mask: -1
