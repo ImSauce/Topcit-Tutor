@@ -42,6 +42,7 @@ public class AuthManager : MonoBehaviour
     // A separate script that knows how to load the next scene (like your main menu).
     // We call this once login succeeds.
     public SceneLoader sceneLoader;
+    public SceneTransition sceneTransition;
 
     [Header("Register")]
     // Where the player types the username they want.
@@ -151,7 +152,7 @@ public class AuthManager : MonoBehaviour
         confirmLoginText.text = "Logged In";
 
         // Move the player on to the next scene (like your main menu).
-        sceneLoader.LoadScene();
+        sceneTransition.Transition();
     }
 
     /// <summary>
