@@ -3,6 +3,8 @@ using Firebase.Firestore;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 
 public class XPBar : MonoBehaviour
 {
@@ -12,6 +14,9 @@ public class XPBar : MonoBehaviour
     [Header("XP Settings")]
     public long startingXpCap = 50;
     public long xpIncreasePerLevel = 10;
+
+    [Header("XP Text")]
+    public TMP_Text xpText;
 
     private long currentXP;
     private long currentLevel;
@@ -122,6 +127,8 @@ public class XPBar : MonoBehaviour
         xpSlider.minValue = 0;
         xpSlider.maxValue = currentXpCap;
         xpSlider.value = currentXP;
+
+        xpText.text = $"{currentXP}/{currentXpCap}";
     }
 
 

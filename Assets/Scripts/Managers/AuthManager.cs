@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Firebase.Auth;
 using Firebase.Extensions;
+using Firebase.Firestore;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +13,10 @@ using UnityEngine.UI;
 /// It reads whatever the player typed into the email/password/username boxes,
 /// sends that information to Firebase, and then shows a message telling the
 /// player whether it worked or not.
+///
+/// NEW: When a brand new account is created, this script also builds a starter
+/// "profile" for that player inside Firestore (your database) - things like
+/// their level, points, XP, a starter achievement, and a starter subject.
 ///
 /// SETUP NEEDED:
 /// - Put this script on an "AuthManager" GameObject in your scene.
@@ -58,6 +64,11 @@ public class AuthManager : MonoBehaviour
     // A shortcut so the rest of this script can just write "Auth" instead of
     // typing "FirebaseManager.Instance.Auth" every single time.
     private FirebaseAuth Auth => FirebaseManager.Instance.Auth;
+
+    // Same idea, but for Firestore (the database that stores our player data).
+    // If your FirebaseManager already has a Firestore reference, you can swap
+    // this line for FirebaseManager.Instance.Db instead.
+    private FirebaseFirestore Db => FirebaseFirestore.DefaultInstance;
 
     // =========================================================
     // BUTTON HOOKS
@@ -195,6 +206,22 @@ public class AuthManager : MonoBehaviour
         {
             // The account itself was created fine, just the username part failed.
             warningRegisterText.text = "Account created, but setting username failed.";
+            return;
+        }
+
+        // The Auth account is fully set up now. Next, build that player's
+        // starter data inside Firestore (level, points, achievements, etc).
+        // All of that work lives in a separate script: NewUserDataInitializer.cs
+        try
+        {
+            await NewUserDataInitializer.CreateNewUserData(Db, newUser.UserId, username);
+        }
+        catch (System.Exception e)
+        {
+            // The account itself is fine - only the starter data failed to save.
+            // We still let the player through, but log this so you can check it.
+            Debug.LogError($"Failed to create starter Firestore data: {e}");
+            warningRegisterText.text = "Account created, but starter data failed to save.";
             return;
         }
 
