@@ -9,7 +9,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Close_Gemini_UI_Outro_Anim
+    m_ConditionEvent: Close_UI_Outro
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 6573741263794757608}
@@ -34,7 +34,7 @@ AnimatorController:
   m_Name: Gemini Visibility
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: Close_Gemini_UI_Outro_Anim
+  - m_Name: Close_UI_Outro
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0

@@ -5,9 +5,9 @@ public class AnimationToggles : MonoBehaviour
     
     public Animator animator;
 
-    public void PlayGeminiUIOutro()
+    public void CloseUIDuringOutro()
     {
-        animator.SetTrigger("Close_Gemini_UI_Outro_Anim");
+        animator.SetTrigger("Close_UI_Outro");
     }
 
     public void DisableUI()
