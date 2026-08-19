@@ -59,11 +59,11 @@ public class LessonButtonController : MonoBehaviour
 
     [Header("Unlocked visuals")]
     public Sprite unlockedSprite;
-    public string unlockedLabel = "Start";
+    public string unlockedLabel = "Read";
 
     [Header("Completed visuals")]
     public Sprite completedSprite;
-    public string completedLabel = "Completed";
+    public string completedLabel = "Review";
 
     // Cached so multiple callers (this lesson's own OnEnable, and the NEXT
     // lesson checking whether IT should unlock) don't each trigger their
