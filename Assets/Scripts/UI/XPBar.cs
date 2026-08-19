@@ -5,26 +5,32 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
 public class XPBar : MonoBehaviour
 {
     [Header("XP Slider")]
     public Slider xpSlider;
-
-    [Header("XP Settings")]
-    public long startingXpCap = 50;
-    public long xpIncreasePerLevel = 10;
 
     [Header("XP Text")]
     public TMP_Text xpText;
 
     private long currentXP;
     private long currentLevel;
+    private long currentTotalXp;
     private long currentXpCap;
 
     private string userId;
+    private bool dataLoaded = false;
 
     private async void Start()
+    {
+        await LoadPlayerXP();
+    }
+
+    // =========================================================
+    // LOAD PLAYER DATA
+    // =========================================================
+
+    private async System.Threading.Tasks.Task LoadPlayerXP()
     {
         FirebaseUser user = FirebaseManager.Instance.Auth.CurrentUser;
 
@@ -36,7 +42,6 @@ public class XPBar : MonoBehaviour
 
         userId = user.UserId;
 
-        // Get player's XP and level from Firestore
         DocumentSnapshot userData =
             await FirestoreManager.Instance.GetUser(userId);
 
@@ -46,34 +51,59 @@ public class XPBar : MonoBehaviour
             return;
         }
 
-        currentXP = userData.GetValue<long>("xp");
-        currentLevel = userData.GetValue<long>("level");
+        // ContainsField checks matter here - older test accounts made before
+        // totalXp existed won't have that field yet, and GetValue<T> throws
+        // if the field is missing rather than just returning a default.
+        currentXP = userData.ContainsField("xp") ? userData.GetValue<long>("xp") : 0;
+        currentLevel = userData.ContainsField("level") ? userData.GetValue<long>("level") : 1;
+        currentTotalXp = userData.ContainsField("totalXp") ? userData.GetValue<long>("totalXp") : 0;
 
-        CalculateXpCap();
+        // Self-heal: if this account has leftover xp sitting over its level's
+        // cap (from before this fix existed), correct it now and save the fix.
+        var (healedLevel, healedXp) = LevelingRules.ApplyXpGain(currentLevel, currentXP, 0);
+        if (healedLevel != currentLevel || healedXp != currentXP)
+        {
+            Debug.Log($"Correcting stale over-cap XP: {currentLevel}/{currentXP} -> {healedLevel}/{healedXp}");
+            currentLevel = healedLevel;
+            currentXP = healedXp;
+
+            await FirestoreManager.Instance.UpdateFields($"Users/{userId}", new Dictionary<string, object>
+            {
+                { "xp", currentXP },
+                { "level", currentLevel }
+            });
+        }
+
+        currentXpCap = LevelingRules.GetXpCapForLevel(currentLevel);
+
         UpdateSlider();
+
+        dataLoaded = true;
+
+        Debug.Log($"XP Loaded: {currentXP}/{currentXpCap} | Level: {currentLevel} | Total XP: {currentTotalXp}");
     }
 
     // =========================================================
-    // XP SYSTEM
+    // ADD XP
     // =========================================================
-
-    private void CalculateXpCap()
-    {
-        currentXpCap =
-            startingXpCap +
-            ((currentLevel - 1) * xpIncreasePerLevel);
-    }
 
     /// <summary>
-    /// Adds XP to the player.
-    /// Handles level-ups and saves the result to Firestore.
+    /// Grants XP through FirestoreManager.GrantXp, which does a fresh
+    /// read-modify-write against Firestore (not just this component's cached
+    /// values) - so it stays correct even if XP was also granted from a
+    /// different scene (e.g. a lesson-complete button) since this bar last loaded.
     /// </summary>
-    /// 
     public async void AddXP(long amount)
     {
         if (amount <= 0)
         {
             Debug.LogWarning("XP amount must be greater than 0.");
+            return;
+        }
+
+        if (!dataLoaded)
+        {
+            Debug.LogWarning("XP data hasn't finished loading yet.");
             return;
         }
 
@@ -83,39 +113,27 @@ public class XPBar : MonoBehaviour
             return;
         }
 
-        // Add XP
-        currentXP += amount;
+        XpGrantResult result = await FirestoreManager.Instance.GrantXp(userId, amount);
 
-        // Handle level-ups
-        while (currentXP >= currentXpCap)
-        {
-            currentXP -= currentXpCap;
-
-            currentLevel++;
-
-            CalculateXpCap();
-
-            Debug.Log($"Level Up! New Level: {currentLevel}");
-        }
-
-        // Save XP and level to Firestore
-        bool saved = await FirestoreManager.Instance.UpdateFields(
-            $"Users/{userId}",
-            new Dictionary<string, object>
-            {
-                { "xp", currentXP },
-                { "level", currentLevel }
-            }
-        );
-
-        if (!saved)
+        if (!result.Success)
         {
             Debug.LogError("Failed to save XP and level.");
             return;
         }
 
-        // Update the slider
+        currentXP = result.NewXp;
+        currentLevel = result.NewLevel;
+        currentTotalXp = result.NewTotalXp;
+        currentXpCap = LevelingRules.GetXpCapForLevel(currentLevel);
+
         UpdateSlider();
+
+        Debug.Log(
+            $"XP Added: +{amount} | " +
+            $"Current XP: {currentXP}/{currentXpCap} | " +
+            $"Level: {currentLevel} | " +
+            $"Total XP: {currentTotalXp}"
+        );
     }
 
     // =========================================================
@@ -124,6 +142,18 @@ public class XPBar : MonoBehaviour
 
     private void UpdateSlider()
     {
+        if (xpSlider == null)
+        {
+            Debug.LogError("XP Slider is not assigned!");
+            return;
+        }
+
+        if (xpText == null)
+        {
+            Debug.LogError("XP Text is not assigned!");
+            return;
+        }
+
         xpSlider.minValue = 0;
         xpSlider.maxValue = currentXpCap;
         xpSlider.value = currentXP;
@@ -131,12 +161,21 @@ public class XPBar : MonoBehaviour
         xpText.text = $"{currentXP}/{currentXpCap}";
     }
 
+    // =========================================================
+    // REFRESH
+    // =========================================================
 
+    public async void RefreshPlayerData()
+    {
+        await LoadPlayerXP();
+    }
 
-    public void Add10XP() // gfor testing purposes
+    // =========================================================
+    // TEST
+    // =========================================================
+
+    public void Add10XP()
     {
         AddXP(10);
     }
-
-
 }

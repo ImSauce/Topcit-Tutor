@@ -10,7 +10,7 @@ using Firebase.Firestore;
 /// (your database) so the game has something to read from right away.
 ///
 /// It builds, in this order:
-///   1) The player's main profile (level, points, xp, etc.)
+///   1) The player's main profile (level, points, xp, totalXp, etc.)
 ///   2) Their starting Achievements
 ///   3) Their starting Inventory items
 ///   4) Their starting Subjects, and everything nested inside each Subject:
@@ -174,17 +174,21 @@ public static class NewUserDataInitializer
         DocumentReference userDoc = db.Collection("Users").Document(userId);
 
         // ---- Step 1: Save the main profile fields ----
+        // "xp" is capped per level (what the XP bar shows). "totalXp" is the
+        // lifetime, uncapped running total - they start equal here since the
+        // player hasn't leveled up yet, but they'll drift apart over time as
+        // "xp" resets on every level-up while "totalXp" just keeps climbing.
         Dictionary<string, object> profileData = new Dictionary<string, object>
         {
             { "createdAt", Timestamp.GetCurrentTimestamp() },
-            { "hints", 0 },
             { "level", 1 },
             { "points", 0 },
             { "streak", 1 },
             { "lobbyTutorial", false },
             { "module", false },
             { "username", username },
-            { "xp", 1 }
+            { "xp", 0 },
+            { "totalXp", 0 }
         };
         await userDoc.SetAsync(profileData);
 

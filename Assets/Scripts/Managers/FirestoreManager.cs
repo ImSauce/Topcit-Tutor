@@ -18,6 +18,19 @@ using UnityEngine;
 ///             ├─ Lessons/{lessonId}
 ///             └─ Quizzes/{quizId}
 ///----------------------------------------------------------------------------------------------
+
+/// <summary>
+/// What GrantXp() hands back after it finishes, so callers (XPBar, FirebaseButtonAction)
+/// can update their UI immediately without doing a second Firestore read.
+/// </summary>
+public struct XpGrantResult
+{
+    public bool Success;
+    public long NewLevel;
+    public long NewXp;
+    public long NewTotalXp;
+}
+
 public class FirestoreManager : MonoBehaviour
 {
     public static FirestoreManager Instance { get; private set; }
@@ -121,7 +134,9 @@ public class FirestoreManager : MonoBehaviour
         }
     }
 
-    /// Atomically increments a numeric field (points, xp, streak, hints, etc.) without a separate read.
+    /// Atomically increments a numeric field (points, streak, hints, etc.) without a separate read.
+    /// NOTE: don't use this for XP if you want leveling to happen - use GrantXp() below instead.
+    /// This is a raw increment with no cap/level-up awareness.
     public async Task<bool> IncrementField(string path, string field, long amount)
     {
         return await UpdateFields(path, new Dictionary<string, object>
@@ -142,6 +157,7 @@ public class FirestoreManager : MonoBehaviour
             { "username", username },
             { "level", 1 },
             { "xp", 0 },
+            { "totalXp", 0 },
             { "points", 0 },
             { "streak", 1 },
             { "hints", 0 },
@@ -155,9 +171,59 @@ public class FirestoreManager : MonoBehaviour
         return await GetDocument($"Users/{userId}");
     }
 
+    /// Raw increment of the "xp" field only. No level-up math, no totalXp tracking.
+    /// Kept around in case you need a plain increment somewhere - for anything
+    /// player-facing (buttons, quiz rewards, etc.) use GrantXp() instead.
     public async Task<bool> AddXp(string userId, long amount)
     {
         return await IncrementField($"Users/{userId}", "xp", amount);
+    }
+
+    /// <summary>
+    /// THE method to use whenever a player earns XP. Does a fresh read of their
+    /// current xp/level/totalXp, applies the gain through LevelingRules (so it
+    /// correctly rolls over one or more level-ups instead of just sitting over
+    /// the cap), and writes xp + level + totalXp back together.
+    ///
+    /// "xp" stays capped to the current level's bar (what your XP bar UI shows).
+    /// "totalXp" keeps counting up forever, uncapped - lifetime XP earned.
+    /// </summary>
+    public async Task<XpGrantResult> GrantXp(string userId, long amount)
+    {
+        if (amount <= 0)
+        {
+            // Nothing to add - not an error, just a no-op.
+            return new XpGrantResult { Success = true };
+        }
+
+        DocumentSnapshot snapshot = await GetDocument($"Users/{userId}");
+        if (snapshot == null)
+        {
+            Debug.LogError($"GrantXp failed: no user document for {userId}");
+            return new XpGrantResult { Success = false };
+        }
+
+        long currentXp = snapshot.ContainsField("xp") ? snapshot.GetValue<long>("xp") : 0;
+        long currentLevel = snapshot.ContainsField("level") ? snapshot.GetValue<long>("level") : 1;
+        long currentTotalXp = snapshot.ContainsField("totalXp") ? snapshot.GetValue<long>("totalXp") : 0;
+
+        var (newLevel, newXp) = LevelingRules.ApplyXpGain(currentLevel, currentXp, amount);
+        long newTotalXp = currentTotalXp + amount;
+
+        bool saved = await UpdateFields($"Users/{userId}", new Dictionary<string, object>
+        {
+            { "xp", newXp },
+            { "level", newLevel },
+            { "totalXp", newTotalXp }
+        });
+
+        return new XpGrantResult
+        {
+            Success = saved,
+            NewLevel = newLevel,
+            NewXp = newXp,
+            NewTotalXp = newTotalXp
+        };
     }
 
     public async Task<bool> AddPoints(string userId, long amount)
