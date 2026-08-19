@@ -225,6 +225,12 @@ public class FirebaseButtonAction : MonoBehaviour
             OnActionCompleted?.Invoke(actionType, affectedId);
             playerLobbyUI.RefreshPlayerData();
             XPBar.RefreshPlayerData();
+
+            LessonButtonController[] lessonButtons = FindObjectsByType<LessonButtonController>(FindObjectsSortMode.None);
+            foreach (LessonButtonController lessonButton in lessonButtons){
+                lessonButton.Refresh();
+            }
+
         }
     }
 

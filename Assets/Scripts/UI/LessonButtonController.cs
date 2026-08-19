@@ -148,6 +148,7 @@ public class LessonButtonController : MonoBehaviour
         switch (state)
         {
             case VisualState.Locked:
+                DisableButton();
                 if (button != null) button.interactable = false;
                 if (buttonImage != null && lockedSprite != null) buttonImage.sprite = lockedSprite;
                 if (buttonText != null) buttonText.text = lockedLabel;
@@ -195,4 +196,20 @@ public class LessonButtonController : MonoBehaviour
             Refresh();
         }
     }
+
+    public void DisableButton()
+    {
+        if (button != null)
+        {
+            button.interactable = false;
+
+            // Prevent Unity's Button from changing the visual color
+            ColorBlock colors = button.colors;
+            colors.disabledColor = colors.normalColor;
+            button.colors = colors;
+        }
+    }
+
+
+
 }

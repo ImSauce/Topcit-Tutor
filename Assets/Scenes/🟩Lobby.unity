@@ -6758,6 +6758,7 @@ MonoBehaviour:
   levelText: {fileID: 681791472}
   pointsText: {fileID: 1422899201}
   streakText: {fileID: 528919773}
+  totalXpText: {fileID: 0}
 --- !u!114 &651137806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6771,8 +6772,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::XPBar
   xpSlider: {fileID: 299806027}
-  startingXpCap: 50
-  xpIncreasePerLevel: 10
   xpText: {fileID: 1322317569}
 --- !u!114 &651137807
 MonoBehaviour:
@@ -11565,6 +11564,10 @@ PrefabInstance:
       propertyPath: uiText
       value: 
       objectReference: {fileID: 41877359}
+    - target: {fileID: 6015506993103287062, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: jsonApi
+      value: 
+      objectReference: {fileID: 4900000, guid: feee0a5d94d9ae44693f8b1d61549d28, type: 3}
     - target: {fileID: 6015506993103287062, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
       propertyPath: inputField
       value: 
