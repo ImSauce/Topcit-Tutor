@@ -164,6 +164,11 @@ public class Outline : MonoBehaviour {
 
     foreach (var meshFilter in GetComponentsInChildren<MeshFilter>()) {
 
+      // Skip missing meshes
+      if (meshFilter.sharedMesh == null) {
+        continue;
+      }
+
       // Skip duplicates
       if (!bakedMeshes.Add(meshFilter.sharedMesh)) {
         continue;
@@ -181,6 +186,11 @@ public class Outline : MonoBehaviour {
 
     // Retrieve or generate smooth normals
     foreach (var meshFilter in GetComponentsInChildren<MeshFilter>()) {
+
+      // Skip missing meshes
+      if (meshFilter.sharedMesh == null) {
+        continue;
+      }
 
       // Skip if smooth normals have already been adopted
       if (!registeredMeshes.Add(meshFilter.sharedMesh)) {
