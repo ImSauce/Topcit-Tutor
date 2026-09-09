@@ -5,21 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/lobby idea.unity
-    guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
-    path: Assets/Scenes/Auth Tutorial.unity
-    guid: d3c095d7e7b30644c925998a0b5842a5
-  - enabled: 1
-    path: Assets/Scenes/PC ONLY/Quiz UI Practice.unity
-    guid: 02ddb259cbeef3b44b7b13421d554142
   - enabled: 1
     path: "Assets/Scenes/\U0001F7E9Lobby.unity"
     guid: 339062f8067a5de4e9af40ece1dcdfc0
   - enabled: 1
-    path: Assets/Scenes/PC ONLY/Modules.unity
-    guid: 0b917a4f07126434aadb83aba3618948
+    path: "Assets/Scenes/\U0001F7E9Modules.unity"
+    guid: d8507bca7632e424eb66855d0eb8239d
   - enabled: 1
     path: "Assets/Scenes/\U0001F7E9Login.unity"
     guid: 34c830bab0e78124bae78c2ad0501a1e
