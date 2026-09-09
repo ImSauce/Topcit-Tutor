@@ -1,0 +1,113 @@
+rules_version = '2';
+
+// ============================================================================
+// TOPCIT Tutor - Firestore security rules
+// ----------------------------------------------------------------------------
+// Deploy with:   firebase deploy --only firestore:rules
+//
+// WHAT THESE RULES DO
+//   * A signed-in student can read and write ONLY their own Users/{uid} tree.
+//   * A student whose profile has  disabled: true  is locked out of their own
+//     data - this is what the admin portal's "Deactivate" button relies on.
+//   * Any signed-in user can READ the Users collection (needed for the
+//     in-game leaderboard) but can never write to another student.
+//   * An admin is any account with a document at Admins/{uid}. Admins can read
+//     and write everything.
+//   * Catalogs, config and announcements are readable by students, writable by
+//     admins only.
+//
+// BEFORE YOU DEPLOY
+//   Create your first admin by hand, or you will lock yourself out:
+//     1. Firebase console > Authentication > Users > Add user (email+password)
+//     2. Copy that account's UID
+//     3. Firestore > Start collection "Admins" > Document ID = that UID
+//        Fields: name (string), email (string), role (string)
+// ============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/Admins/$(request.auth.uid));
+    }
+
+    function isSelf(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    // A profile that does not exist yet cannot be disabled - this keeps the
+    // Unity registration flow working, since it writes Users/{uid} first.
+    function notDisabled(userId) {
+      return !exists(/databases/$(database)/documents/Users/$(userId))
+        || get(/databases/$(database)/documents/Users/$(userId)).data.get('disabled', false) != true;
+    }
+
+    function ownsAndActive(userId) {
+      return isSelf(userId) && notDisabled(userId);
+    }
+
+    // ---- Students ---------------------------------------------------------
+    match /Users/{userId} {
+      // Any signed-in account may read profiles so the leaderboard works.
+      allow read: if signedIn();
+      allow create, update, delete: if isAdmin() || ownsAndActive(userId);
+
+      // Achievements, Inventory, Subjects > Modules > Lessons / Quizzes
+      match /{document=**} {
+        allow read: if isAdmin() || isSelf(userId);
+        allow write: if isAdmin() || ownsAndActive(userId);
+      }
+    }
+
+    // ---- Administrators ---------------------------------------------------
+    match /Admins/{adminId} {
+      // An account must be able to read its own record to pass the portal's
+      // sign-in check.
+      allow get: if isSelf(adminId) || isAdmin();
+      allow list: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // ---- Admin-managed content, readable by the game ----------------------
+    match /AchievementCatalog/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /ItemCatalog/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /SubjectCatalog/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+      match /{document=**} {
+        allow read: if signedIn();
+        allow write: if isAdmin();
+      }
+    }
+
+    match /Announcements/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /Config/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // ---- Audit trail: admins only, and entries cannot be rewritten --------
+    match /AdminLogs/{logId} {
+      allow read, create: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // Anything not matched above is denied.
+  }
+}

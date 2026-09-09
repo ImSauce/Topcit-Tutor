@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TOPCIT Tutor — Admin Portal</title>
+  <link rel="icon" href="./assets/topcit-logo.png" />
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <!-- ============ LOGIN SCREEN ============ -->
+  <div id="login-screen" class="login-screen">
+    <form id="login-form" class="login-card">
+      <div class="login-brand">
+        <h1><img src="./assets/topcit-logo.png" alt="TOPCIT Tutor" /></h1>
+        <p>Administrator Portal</p>
+      </div>
+      <label class="field">
+        <span>Email</span>
+        <input id="login-email" type="email" autocomplete="username" required placeholder="admin@example.com" />
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input id="login-password" type="password" autocomplete="current-password" required placeholder="••••••••" />
+      </label>
+      <button id="login-submit" class="btn btn-primary btn-block" type="submit">Sign in</button>
+      <button id="login-reset" class="btn btn-ghost btn-block btn-sm" type="button">Forgot password?</button>
+      <p id="login-error" class="login-error" hidden></p>
+      <p class="login-foot">Only accounts listed in the <code>Admins</code> collection can sign in here.</p>
+    </form>
+  </div>
+
+  <!-- ============ APP SHELL ============ -->
+  <div id="app-shell" class="shell" hidden>
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <img class="sidebar-logo" src="./assets/topcit-logo.png" alt="" />
+        <div class="sidebar-brand-text">
+          <strong>TOPCIT Tutor</strong>
+          <span>Admin Portal</span>
+        </div>
+      </div>
+      <nav id="nav" class="nav">
+        <span class="nav-group">Overview</span>
+        <a href="#/dashboard"    data-route="dashboard">Dashboard</a>
+        <a href="#/leaderboard"  data-route="leaderboard">Leaderboard</a>
+        <a href="#/reports"      data-route="reports">Reports &amp; Analytics</a>
+        <span class="nav-group">Students</span>
+        <a href="#/users"        data-route="users">User Management</a>
+        <a href="#/progress"     data-route="progress">Progress Monitoring</a>
+        <span class="nav-group">Content &amp; Rewards</span>
+        <a href="#/curriculum"   data-route="curriculum">Curriculum</a>
+        <a href="#/achievements" data-route="achievements">Achievements</a>
+        <a href="#/economy"      data-route="economy">In-App Economy</a>
+        <span class="nav-group">System</span>
+        <a href="#/announcements" data-route="announcements">Announcements</a>
+        <a href="#/explorer"     data-route="explorer">Database Explorer</a>
+        <a href="#/settings"     data-route="settings">Settings &amp; Admins</a>
+      </nav>
+      <div class="sidebar-foot">
+        <button id="theme-toggle" class="btn btn-ghost btn-sm btn-block" type="button">Toggle theme</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="menu-toggle" class="btn btn-ghost btn-icon" type="button" aria-label="Toggle menu">☰</button>
+        <div id="crumbs" class="crumbs"></div>
+        <div class="topbar-right">
+          <div class="who">
+            <strong id="who-name">—</strong>
+            <span id="who-role">—</span>
+          </div>
+          <button id="logout" class="btn btn-ghost btn-sm" type="button">Sign out</button>
+        </div>
+      </header>
+      <div id="view" class="view"></div>
+    </main>
+  </div>
+
+  <div id="toasts" class="toasts"></div>
+  <div id="modal-root"></div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
