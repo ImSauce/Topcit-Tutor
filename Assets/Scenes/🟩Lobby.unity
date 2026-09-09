@@ -6785,13 +6785,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b4feed9add731c4aa72af7ef2288882, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelBadgeSystem
-  badgeImageUI: {fileID: 33395656}
-  badges:
-  - requiredLevel: 0
-    badgeImage: {fileID: 21300000, guid: 65d0feb3677a572499d7aa13833da4cd, type: 3}
-  - requiredLevel: 5
-    badgeImage: {fileID: 21300000, guid: f4eb8d4bc7a47ab45b4da79ceeb8381e, type: 3}
-  updateOnStart: 1
 --- !u!1 &662509129
 GameObject:
   m_ObjectHideFlags: 0
@@ -10649,7 +10642,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
   scenes:
-  - sceneAsset: {fileID: 102900000, guid: 0b917a4f07126434aadb83aba3618948, type: 3}
+  - sceneAsset: {fileID: 102900000, guid: d8507bca7632e424eb66855d0eb8239d, type: 3}
     sceneName: "\U0001F7E9Modules"
   - sceneAsset: {fileID: 102900000, guid: 34c830bab0e78124bae78c2ad0501a1e, type: 3}
     sceneName: "\U0001F7E9Login"
