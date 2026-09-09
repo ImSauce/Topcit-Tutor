@@ -36,6 +36,7 @@ public class FirestoreManager : MonoBehaviour
     public static FirestoreManager Instance { get; private set; }
 
     private FirebaseFirestore db;
+    private readonly TaskCompletionSource<bool> ready = new TaskCompletionSource<bool>();
 
     private void Awake()
     {
@@ -48,7 +49,21 @@ public class FirestoreManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        InitializeFirestoreAsync();
+    }
+
+    /// Waits for FirebaseManager to finish CheckAndFixDependenciesAsync before touching
+    /// Firestore - calling FirebaseFirestore.DefaultInstance any earlier throws
+    /// InvalidOperationException and leaves db null, which crashes every call below.
+    private async void InitializeFirestoreAsync()
+    {
+        while (FirebaseManager.Instance == null || !FirebaseManager.Instance.IsReady)
+        {
+            await Task.Yield();
+        }
+
         db = FirebaseFirestore.DefaultInstance;
+        ready.SetResult(true);
     }
 
     // =========================================================
@@ -60,6 +75,7 @@ public class FirestoreManager : MonoBehaviour
     {
         try
         {
+            await ready.Task;
             DocumentReference doc = db.Document(path);
             SetOptions options = merge ? SetOptions.MergeAll : null;
             await doc.SetAsync(data, options);
@@ -77,6 +93,7 @@ public class FirestoreManager : MonoBehaviour
     {
         try
         {
+            await ready.Task;
             DocumentReference doc = db.Document(path);
             await doc.UpdateAsync(fields);
             return true;
@@ -93,6 +110,7 @@ public class FirestoreManager : MonoBehaviour
     {
         try
         {
+            await ready.Task;
             DocumentReference doc = db.Document(path);
             DocumentSnapshot snapshot = await doc.GetSnapshotAsync();
             return snapshot.Exists ? snapshot : null;
@@ -109,6 +127,7 @@ public class FirestoreManager : MonoBehaviour
     {
         try
         {
+            await ready.Task;
             CollectionReference collection = db.Collection(path);
             QuerySnapshot snapshot = await collection.GetSnapshotAsync();
             return new List<DocumentSnapshot>(snapshot.Documents);
@@ -124,6 +143,7 @@ public class FirestoreManager : MonoBehaviour
     {
         try
         {
+            await ready.Task;
             await db.Document(path).DeleteAsync();
             return true;
         }
